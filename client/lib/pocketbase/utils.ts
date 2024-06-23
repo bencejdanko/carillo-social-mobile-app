@@ -1,20 +1,23 @@
 import PocketBase from 'pocketbase';
-const pb = new PocketBase('https://pb.car-rillo.com/');
+const pb = new PocketBase('https://pb.car-rillo.com');
 
+let status;
 console.log(pb.health.check()
     .then((response) => {
         console.log('Server is up and running');
+        status = true
     })
     .catch((error) => {
         console.log('Server is down');
+        status = false
     })
 );
 
 pb.autoCancellation(true);
-export default pb;
 
-export const handler = {
-    authStore: pb.authStore,
+export { pb, status };
+
+export const authHandler = {
 
     register: async (email: string, password: string, passwordConfirm: string) => {
         try {
@@ -40,16 +43,6 @@ export const handler = {
             if (error.response) {
                 return new Error(error.response.message);
             }
-            // if (error.data) {
-            //     console.log('data', error.data)
-            //     let errorMessage = '';
-            //     for (let key in error.data) {
-            //         if (error.data.hasOwnProperty(key) && error.data[key].message) {
-            //             errorMessage += ',' + error.data[key].message;
-            //         }
-            //     }
-            //     return errorMessage;
-            // }
         }
     },
 

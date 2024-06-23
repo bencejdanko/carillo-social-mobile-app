@@ -1,7 +1,14 @@
 import {
     SafeAreaView,
     ScrollView,
+    Dimensions,
 } from 'react-native';
+
+import FacebookLogo from '~/assets/images/meta-icon.svg';
+import GoogleLogo from '~/assets/images/Google__G__logo.svg';
+import AppleLogo from '~/assets/images/Apple_logo_black.svg';
+
+import { useColorScheme } from '~/lib/useColorScheme';
 
 import {
     Card,
@@ -18,9 +25,15 @@ import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import * as React from 'react';
 
-import { handler } from '~/lib/pocketbase/utils';
+import { pb, authHandler } from '~/lib/pocketbase/utils';
 
-export default function Auth( { navigation }: any ) {
+export default function Auth({ navigation }: any) {
+
+    if (pb.authStore.model) {
+        navigation.navigate('Home');
+    }
+
+    const { isDarkColorScheme } = useColorScheme();
 
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -28,7 +41,7 @@ export default function Auth( { navigation }: any ) {
     const [loading, setLoading] = React.useState(false);
     const [register, setRegister] = React.useState(false);
     const [error, setError] = React.useState('');
-    const [authModel, setAuthModel] = React.useState(handler.authStore.model);
+    const [authModel, setAuthModel] = React.useState(pb.authStore.model);
 
     const onSubmit = async () => {
         if (register) {
@@ -36,18 +49,23 @@ export default function Auth( { navigation }: any ) {
             if (result instanceof Error) {
                 setError(result.message)
             }
+            navigation.navigate('Home');
         } else {
-            let result = await handler.login(email, password);
+            let result = await authHandler.login(email, password);
             if (result instanceof Error) {
                 setError(result.message)
             }
+            navigation.navigate('Home');
         }
     }
 
+    let { width, height } = Dimensions.get('window');
+    height = height - 50;
+
     return (
-        <SafeAreaView className=''>
+        <SafeAreaView>
             <ScrollView>
-                <Card className='m-5'>
+                <Card style={{ height: height, flex: 1, justifyContent: 'center' }} className='rounded-none'>
                     <CardContent>
 
                         <Input
@@ -62,6 +80,7 @@ export default function Auth( { navigation }: any ) {
                             placeholder='Password'
                             value={password}
                             onChangeText={setPassword}
+                            secureTextEntry={true}
 
                         />
 
@@ -71,27 +90,65 @@ export default function Auth( { navigation }: any ) {
                                 placeholder='Confirm Password'
                                 value={confirmPassword}
                                 onChangeText={setConfirmPassword}
+                                secureTextEntry={true}
+
                             />
                         }
 
-                        {email && password && (register ? confirmPassword : true) &&
-                            <Button
-                                className='mt-3'
-                                onPress={() => { onSubmit() }}
-                            >
-                                <Text>{register ? 'Register' : 'Login'}</Text>
-                            </Button>
-                        }
+
+                        <Button
+                            className='mt-3'
+                            onPress={() => { onSubmit() }}
+                            disabled={!email || !password || (register && !confirmPassword)}
+                        >
+                            <Text>{register ? 'Register' : 'Login'}</Text>
+                        </Button>
+
+                        <Text
+                            className='text-[#60aeff] mt-2'
+                            style={{ textAlign: 'right' }}
+                            onPress={() => { console.log('forgot password') }}
+                        >
+                            Forgot password?
+                        </Text>
+
 
                         <Text className='text-red-500'>{error}</Text>
 
                         <Separator className='mt-3' />
 
-                        <Text>
+                        <Button
+                            className='mt-3'
+                            onPress={() => { console.log('google') }}
+                            style= {{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+                        >
+                            <GoogleLogo style={{width: 24, height: 24}}/>
+                            <Text>Google</Text>
+                        </Button>
+                        <Button
+                            className='mt-3'
+                            onPress={() => { console.log('Apple') }}
+                            style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+                        >
+                            <AppleLogo style={{ width: 24, height: 24, color: isDarkColorScheme ? 'black' : 'white' }} />
+                            <Text>Apple</Text>
+                        </Button>
+                        <Button
+                            className='mt-3'
+                            onPress={() => { console.log('facebook') }}
+                            style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+                        >
+                            <FacebookLogo style={{ width: 24, height: 24 }}  />
+                            <Text>Facebook</Text>
+                        </Button>
+
+                        <Separator className='mt-3' />
+
+                        <Text className='mt-3'>
                             {register ? 'Already have an account?' : 'Don\'t have an account yet?'}
                             {'\u00A0'}
                             <Text
-                                className='text-[blue]'
+                                className='text-[#60aeff]'
                                 onPress={() => { setRegister(!register) }}
                             >
                                 {register ? 'Login' : 'Register'} now!
@@ -105,12 +162,6 @@ export default function Auth( { navigation }: any ) {
                         }
                     </CardContent>
                 </Card>
-
-                <Button
-                    onPress={() => { navigation.navigate('Home') }}
-                >
-                    <Text>Go to Home</Text>
-                </Button>
 
             </ScrollView>
         </SafeAreaView>

@@ -1,7 +1,11 @@
 import '~/global.css';
+import Menu from '~/components/Menu';
 import Auth from '~/components/Auth';
+import Home from '~/components/Home';
+import NewPost from '~/components/NewPost';
+import XButtonHome from '~/components/XButtonHome';
 
-import Carrillo from '~/assets/images/carrillo.svg';
+import { X } from 'lucide-react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Theme, ThemeProvider } from '@react-navigation/native';
@@ -13,30 +17,9 @@ import { NAV_THEME } from '~/lib/constants';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { PortalHost } from '~/components/primitives/portal';
 import { ThemeToggle } from '~/components/ThemeToggle';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 
-// import {
-//   Accordion,
-//   AccordionContent,
-//   AccordionItem,
-//   AccordionTrigger,
-// } from '~/components/ui/accordion';
-
-import Animated, { FadeIn } from 'react-native-reanimated';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
-import { Button } from '~/components/ui/button';
-import { Text } from '~/components/ui/text';
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -56,6 +39,7 @@ export {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
@@ -88,72 +72,65 @@ export default function RootLayout() {
     return null;
   }
 
+  const Stack = createNativeStackNavigator();
 
   return (
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-      <Stack>
+    <NavigationContainer independent={true}>
+      <Stack.Navigator
+        initialRouteName="Auth"
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
         <Stack.Screen
-          name='index'
+          name="Auth"
+          component={Auth}
           options={{
+            headerShown: true,
             title: null,
-            // headerLeft: () =>  <Carrillo width={100} height={30} style={{ color: isDarkColorScheme ? 'white' : 'black' }} />,
-            headerLeft: () => (
-              <>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant='ghost'>
-                      <Carrillo width={100} height={30} style={{ color: isDarkColorScheme ? 'white' : 'black' }} />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className='w-64 native:w-72'>
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>
-                          <Text>Invite users</Text>
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuSubContent>
-                          <Animated.View entering={FadeIn.duration(200)}>
-                            <DropdownMenuItem>
-                              <Text>Email</Text>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Text>Message</Text>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                              <Text>More...</Text>
-                            </DropdownMenuItem>
-                          </Animated.View>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuSub>
-                    </DropdownMenuGroup>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <Text>Settings</Text>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Text>Support</Text>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem disabled>
-                      <Text>API</Text>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <Text>Log out</Text>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </>
-            ),
-
-            headerRight: () => <ThemeToggle />
+            headerStyle: {
+              backgroundColor: isDarkColorScheme ? '#000' : '#fff',
+            },
+            headerLeft: () => <Menu />,
+            headerRight: () => <ThemeToggle />,
+            animation: 'spring',
           }}
         />
-      </Stack>
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{
+            headerShown: true,
+            title: null,
+            headerStyle: {
+              backgroundColor: isDarkColorScheme ? '#000' : '#fff',
+            },
+            headerLeft: () => <Menu />,
+            headerRight: () => <ThemeToggle />,
+            animation: 'spring',
+          }}
+        />
+        <Stack.Screen
+          name='NewPost'
+          component={NewPost}
+          options={{
+            headerShown: true,
+            title: 'New post',
+            headerStyle: {
+              backgroundColor: isDarkColorScheme ? '#000' : '#fff',
+            },
+            headerLeft: () => <XButtonHome />,
+            headerTitleStyle: {
+              color: isDarkColorScheme ? '#fff' : '#000',
+            },
+          }}
+        />
+        {/* Additional screens can be added here */}
+      </Stack.Navigator>
+      <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
       <PortalHost />
-    </ThemeProvider>
+    </NavigationContainer>
+  </ThemeProvider>
   );
 }

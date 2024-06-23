@@ -28,7 +28,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 
 import { useColorScheme } from '~/lib/useColorScheme';
 
-import { handler } from '~/lib/pocketbase/utils';
+import { pb } from '~/lib/pocketbase/utils';
 
 const OverlayMenu = ({ visible, onSelect, items }) => (
     <Modal visible={visible} transparent animationType="fade">
@@ -44,8 +44,12 @@ const OverlayMenu = ({ visible, onSelect, items }) => (
     </Modal>
 );
 
+import { useNavigation } from '@react-navigation/native';
 
-export default function Home({ navigation }: any) {
+
+export default function Home() {
+
+    const navigation = useNavigation();
 
     const { isDarkColorScheme } = useColorScheme();
     const [overlayVisible, setOverlayVisible] = useState(false);
@@ -89,12 +93,14 @@ export default function Home({ navigation }: any) {
     return (
         <SafeAreaView style={{ flex: 1 }}>
 
-            <Card style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} className='p-3'>
+            <Card style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} className='p-3 rounded-none'>
                 <View>
-                    <Text>{handler.authStore.model?.id}</Text>
+                    <Text>{pb.authStore.model?.email}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity className='mr-5'>
+                    <TouchableOpacity className='mr-5'
+                        onPress={() => navigation.navigate('NewPost')}
+                    >
                         <PlusCircle size={24} strokeWidth={2} color={isDarkColorScheme ? 'white' : 'black'} />
                     </TouchableOpacity>
                     <TouchableOpacity>
@@ -104,10 +110,6 @@ export default function Home({ navigation }: any) {
             </Card>
 
             <ScrollView>
-                <Button
-                    onPress={() => navigation.navigate('Auth')}
-                ><Text>Back to auth</Text>
-                </Button>
                 <Image source={require('~/assets/images/carrillo.svg')} />
 
                 {posts.map((post, index) => (
