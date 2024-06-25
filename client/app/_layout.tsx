@@ -1,15 +1,16 @@
 import '~/global.css';
 import Menu from '~/components/Menu';
-import Auth from '~/components/Auth';
-import Home from '~/components/Home';
-import NewPost from '~/components/NewPost';
+import Auth from '~/screens/Auth';
+import Home from '~/screens/Home';
+import NewPost from '~/screens/NewPost';
+import Market from '~/screens/Market';
 import XButtonHome from '~/components/XButtonHome';
 
-import { X } from 'lucide-react-native';
+import { X, Circle, Search } from 'lucide-react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Theme, ThemeProvider } from '@react-navigation/native';
-import { SplashScreen, Stack } from 'expo-router';
+import { Theme, ThemeProvider, useNavigationState } from '@react-navigation/native';
+import { SplashScreen } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Platform } from 'react-native';
@@ -18,8 +19,8 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import { PortalHost } from '~/components/primitives/portal';
 import { ThemeToggle } from '~/components/ThemeToggle';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-
 
 const LIGHT_THEME: Theme = {
   dark: false,
@@ -31,11 +32,9 @@ const DARK_THEME: Theme = {
 };
 
 export {
-  // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from 'expo-router';
 
-// Prevent the splash screen from auto-hiding before getting the color scheme.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -47,7 +46,6 @@ export default function RootLayout() {
     (async () => {
       const theme = await AsyncStorage.getItem('theme');
       if (Platform.OS === 'web') {
-        // Adds the background color to the html element to prevent white background on overscroll.
         document.documentElement.classList.add('bg-background');
       }
       if (!theme) {
@@ -73,18 +71,13 @@ export default function RootLayout() {
   }
 
   const Stack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
 
-  return (
-    <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-    <NavigationContainer independent={true}>
-      <Stack.Navigator
-        initialRouteName="Auth"
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
+  function AuthStack() {
+    return (
+      <Stack.Navigator>
         <Stack.Screen
-          name="Auth"
+          name="AuthStack"
           component={Auth}
           options={{
             headerShown: true,
@@ -97,8 +90,15 @@ export default function RootLayout() {
             animation: 'spring',
           }}
         />
+      </Stack.Navigator>
+    );
+  }
+
+  function HomeStack() {
+    return (
+      <Stack.Navigator>
         <Stack.Screen
-          name="Home"
+          name="HomeStack"
           component={Home}
           options={{
             headerShown: true,
@@ -111,8 +111,15 @@ export default function RootLayout() {
             animation: 'spring',
           }}
         />
+      </Stack.Navigator>
+    );
+  }
+
+  function NewPostStack() {
+    return (
+      <Stack.Navigator>
         <Stack.Screen
-          name='NewPost'
+          name="NewPostStack"
           component={NewPost}
           options={{
             headerShown: true,
@@ -126,11 +133,86 @@ export default function RootLayout() {
             },
           }}
         />
-        {/* Additional screens can be added here */}
       </Stack.Navigator>
-      <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-      <PortalHost />
-    </NavigationContainer>
-  </ThemeProvider>
+    );
+  }
+
+  function MarketStack() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          name="MarketStack"
+          component={Market}
+          options={{
+            headerShown: true,
+            title: null,
+            headerStyle: {
+              backgroundColor: isDarkColorScheme ? '#000' : '#fff',
+            },
+            headerLeft: () => <Menu />,
+            headerRight: () => <ThemeToggle />,
+            animation: 'spring',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  }
+
+  return (
+    <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+      <NavigationContainer independent={true}>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            headerShown: false,
+            tabBarStyle: {
+              backgroundColor: isDarkColorScheme ? '#000' : '#fff',
+              color: isDarkColorScheme ? '#fff' : '#000',
+              display: useNavigationState((state) => {
+                return route.name === 'Auth' || route.name === 'NewPost' ? 'none' : 'flex';
+              }),
+            },
+            tabBarShowLabel: false,
+          
+          })}
+        >
+          <Tab.Screen
+            name="Auth"
+            component={AuthStack}
+            options={{
+              tabBarButton: (props) => null, 
+              tabBarStyle: { display: 'none' }
+            }}
+            
+          />
+          <Tab.Screen
+            name="Home"
+            component={HomeStack}
+            options={{
+              tabBarIcon: ({ color, size }) => <Circle name="home" color={color} size={size} />,
+            }}
+          />
+          <Tab.Screen
+            name="NewPost"
+            component={NewPostStack}
+            options={{
+              tabBarButton: (props) => null, 
+              tabBarStyle: { display: 'none' }
+            }}
+          />
+
+          <Tab.Screen
+            name="Market"
+            component={MarketStack}
+            options={{
+              tabBarIcon: ({ color, size }) => <Search name="market" color={color} size={size} />,
+            }}
+          />
+
+          {/* Add more Tab.Screens as needed */}
+        </Tab.Navigator>
+        <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+        <PortalHost />
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }

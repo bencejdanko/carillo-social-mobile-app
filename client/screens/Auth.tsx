@@ -48,12 +48,14 @@ export default function Auth({ navigation }: any) {
             let result = await handler.register(email, password, confirmPassword);
             if (result instanceof Error) {
                 setError(result.message)
+                return;
             }
             navigation.navigate('Home');
         } else {
             let result = await authHandler.login(email, password);
             if (result instanceof Error) {
                 setError(result.message)
+                return;
             }
             navigation.navigate('Home');
         }

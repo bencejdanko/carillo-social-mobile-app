@@ -19,7 +19,7 @@ export default function NewPost() {
             quality: 1,
         });
 
-        if (!result.cancelled) {
+        if (!result.canceled) {
             setImageUri(result.assets[0].uri);
         }
         console.log('Completed image selection:', result)
