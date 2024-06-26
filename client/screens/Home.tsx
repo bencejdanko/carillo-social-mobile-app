@@ -1,3 +1,6 @@
+import MasonryList from '@react-native-seoul/masonry-list';
+
+
 import { MessageCircle, Ellipsis, EllipsisVertical, Plus, PlusCircle } from 'lucide-react-native';
 import {
     SafeAreaView,
@@ -6,6 +9,9 @@ import {
     Touchable,
     TouchableOpacity,
     Modal,
+    Dimensions,
+    ImageBackground,
+    StyleSheet,
 } from 'react-native';
 
 import {
@@ -23,6 +29,8 @@ import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import * as React from 'react';
 import { useState } from 'react';
+
+import HomeCard from '~/components/HomeCard';
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 
@@ -46,10 +54,15 @@ const OverlayMenu = ({ visible, onSelect, items }) => (
 
 import { useNavigation } from '@react-navigation/native';
 
+const height = Dimensions.get('window').height;
 
 export default function Home() {
 
     const navigation = useNavigation();
+
+    if (!pb.authStore.model) {
+        navigation.navigate('Auth');
+    }
 
     const { isDarkColorScheme } = useColorScheme();
     const [overlayVisible, setOverlayVisible] = useState(false);
@@ -111,6 +124,19 @@ export default function Home() {
 
             <ScrollView>
                 <Image source={require('~/assets/images/carrillo.svg')} />
+
+                <Card className='rounded-none'>
+                    <MasonryList
+                        data={posts}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <HomeCard
+                            // Pass the necessary props to your HomeCard component
+                            />
+                        )}
+                    // Add any other props to customize the layout, spacing, etc.
+                    />
+                </Card>
 
                 {posts.map((post, index) => (
                     <TouchableOpacity

@@ -4,9 +4,10 @@ import Auth from '~/screens/Auth';
 import Home from '~/screens/Home';
 import NewPost from '~/screens/NewPost';
 import Market from '~/screens/Market';
+import Community from '~/screens/Community';
 import XButtonHome from '~/components/XButtonHome';
 
-import { X, Circle, Search } from 'lucide-react-native';
+import { X, Circle, Search, Users } from 'lucide-react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Theme, ThemeProvider, useNavigationState } from '@react-navigation/native';
@@ -137,6 +138,27 @@ export default function RootLayout() {
     );
   }
 
+  function CommunityStack() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          name="CommunityStack"
+          component={Community}
+          options={{
+            headerShown: true,
+            title: null,
+            headerStyle: {
+              backgroundColor: isDarkColorScheme ? '#000' : '#fff',
+            },
+            headerLeft: () => <Menu />,
+            headerRight: () => <ThemeToggle />,
+            animation: 'spring',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  }
+
   function MarketStack() {
     return (
       <Stack.Navigator>
@@ -172,17 +194,17 @@ export default function RootLayout() {
               }),
             },
             tabBarShowLabel: false,
-          
+
           })}
         >
           <Tab.Screen
             name="Auth"
             component={AuthStack}
             options={{
-              tabBarButton: (props) => null, 
+              tabBarButton: (props) => null,
               tabBarStyle: { display: 'none' }
             }}
-            
+
           />
           <Tab.Screen
             name="Home"
@@ -195,7 +217,7 @@ export default function RootLayout() {
             name="NewPost"
             component={NewPostStack}
             options={{
-              tabBarButton: (props) => null, 
+              tabBarButton: (props) => null,
               tabBarStyle: { display: 'none' }
             }}
           />
@@ -205,6 +227,14 @@ export default function RootLayout() {
             component={MarketStack}
             options={{
               tabBarIcon: ({ color, size }) => <Search name="market" color={color} size={size} />,
+            }}
+          />
+
+          <Tab.Screen
+            name='Community'
+            component={CommunityStack}
+            options={{
+              tabBarIcon: ({ color, size }) => <Users name='community' color={color} size={size} />
             }}
           />
 

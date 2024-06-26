@@ -1,4 +1,11 @@
 import PocketBase from 'pocketbase';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
+
+import eventsource from "react-native-sse";
+global.EventSource = eventsource;
+
+
 const pb = new PocketBase('https://pb.car-rillo.com');
 
 let status;
@@ -75,6 +82,24 @@ export const authHandler = {
             if (error.response) {
                 return new Error(error.response.message);
             }
+        }
+    },
+
+    googleLogin: async () => {
+        try {
+            await pb.collection('users').authWithOAuth2({
+                provider: 'google',
+                urlCallback: (url) => {
+                    WebBrowser.openAuthSessionAsync(url)
+                        .catch((error) => {
+                            return new Error('Error opening browser: ' + error.message);
+                        });
+                }
+            });
+        } catch (error) {
+        
+            console.log(JSON.stringify(error))
+            return new Error('Error logging in with Google: ' + error.message);
         }
     },
 

@@ -45,7 +45,7 @@ export default function Auth({ navigation }: any) {
 
     const onSubmit = async () => {
         if (register) {
-            let result = await handler.register(email, password, confirmPassword);
+            let result = await authHandler.register(email, password, confirmPassword);
             if (result instanceof Error) {
                 setError(result.message)
                 return;
@@ -59,6 +59,15 @@ export default function Auth({ navigation }: any) {
             }
             navigation.navigate('Home');
         }
+    }
+
+    const googleLogin = async () => {
+        let result = await authHandler.googleLogin();
+        if (result instanceof Error) {
+            setError(result.message)
+            return;
+        }
+        navigation.navigate('Home');
     }
 
     let { width, height } = Dimensions.get('window');
@@ -121,7 +130,7 @@ export default function Auth({ navigation }: any) {
 
                         <Button
                             className='mt-3'
-                            onPress={() => { console.log('google') }}
+                            onPress={() => { googleLogin() }}
                             style= {{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
                         >
                             <GoogleLogo style={{width: 24, height: 24}}/>
