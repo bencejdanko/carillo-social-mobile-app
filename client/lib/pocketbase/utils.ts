@@ -17,6 +17,38 @@ pb.autoCancellation(true);
 
 export { pb, status };
 
+export const postHandler = {
+
+    create: async (description: string, imageUris: string[]) => {
+        if (!pb.authStore.model) {
+            return new Error('User is not authenticated');
+        }
+
+        try {
+
+            const formData = new FormData();
+            formData.append('description', description);
+            formData.append('user', pb.authStore.model.id);
+            imageUris.forEach((uri, index) => {
+                //https://github.com/pocketbase/pocketbase/discussions/2002
+                //IOS and Android support a special type of image upload
+                formData.append("images", {
+                    uri: uri,
+                    name: 'image' + index,
+                    type: 'image/*'
+                });
+                console.log('Image ' + index + ' added to form data')
+            });
+            await pb.collection('posts').create(formData);
+        } catch (error) {
+            console.log(JSON.stringify(error))
+            return new Error(error.message);
+        }
+    },
+
+
+}
+
 export const authHandler = {
 
     register: async (email: string, password: string, passwordConfirm: string) => {
