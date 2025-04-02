@@ -6,7 +6,7 @@ import eventsource from "react-native-sse";
 global.EventSource = eventsource;
 
 
-const pb = new PocketBase('https://pb.car-rillo.com');
+const pb = new PocketBase("https://caring-redbird-immensely.ngrok-free.app");
 
 let status;
 console.log(pb.health.check()

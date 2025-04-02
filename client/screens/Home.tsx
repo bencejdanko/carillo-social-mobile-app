@@ -38,25 +38,39 @@ import { useColorScheme } from '~/lib/useColorScheme';
 
 import { pb } from '~/lib/pocketbase/utils';
 
-const OverlayMenu = ({ visible, onSelect, items }) => (
-    <Modal visible={visible} transparent animationType="fade">
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-            <ScrollView style={{ width: '80%', backgroundColor: 'white', maxHeight: '60%', borderRadius: 10, padding: 20 }}>
-                {items.map((item, index) => (
-                    <TouchableOpacity key={index} onPress={() => onSelect(item)}>
-                        <Text style={{ marginVertical: 10, color: 'black' }}>{item.label}</Text>
-                    </TouchableOpacity>
-                ))}
-            </ScrollView>
-        </View>
-    </Modal>
-);
+
 
 import { useNavigation } from '@react-navigation/native';
 
-const height = Dimensions.get('window').height;
+const { height, width } = Dimensions.get('window');
 
 export default function Home() {
+
+    const OverlayMenu = ({ visible, onSelect, items }) => (
+        <Modal
+            visible={visible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => setOverlayVisible(false)}
+        >
+
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                <HomeCard
+                    avatar={selectedItem?.avatar}
+                    avatarFallback={selectedItem?.avatarFallback}
+                    name={selectedItem?.name}
+                    postImage={selectedItem?.postImage}
+                    aspectRatio={selectedItem?.aspectRatio}
+                    likes={selectedItem?.likes}
+                    comments={selectedItem?.comments}
+                    shares={selectedItem?.shares}
+                    description={selectedItem?.description}
+                    width={Dimensions.get('window').width / 2 -10}
+                />
+
+            </View>
+        </Modal>
+    );
 
     const navigation = useNavigation();
 
@@ -67,10 +81,12 @@ export default function Home() {
     const { isDarkColorScheme } = useColorScheme();
     const [overlayVisible, setOverlayVisible] = useState(false);
     const items = [{ label: 'Reaction 1' }, { label: 'Reaction 2' }]; // Example items
+    const [selectedItem, setSelectedItem] = useState(null);
 
 
-    const handleLongPress = () => {
+    const handleLongPress = (item) => {
         setOverlayVisible(true);
+        setSelectedItem(item);
     }
 
     const handleSelect = (item) => {
@@ -83,11 +99,13 @@ export default function Home() {
         avatar: 'https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg',
         avatarFallback: 'RS',
         name: 'Rick Sanchez',
-        postImage: 'https://as2.ftcdn.net/v2/jpg/05/52/90/99/1000_F_552909948_WnyjkgiiHOlcuBQLdOopcCKBPEd4Il0A.jpg',
+        postImage: 'https://via.placeholder.com/300x450',
+        aspectRatio: 2 / 3,
         likes: 100,
         comments: 50,
         shares: 10,
         description: 'This image shows a scientist named Rick Sanchez. He is a freelance scientist. He is from dimension C-137. He is 70 years old and is a human.',
+
     },
 
     {
@@ -95,7 +113,62 @@ export default function Home() {
         avatar: 'https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg',
         avatarFallback: 'RS',
         name: 'Rick Sanchez',
-        postImage: 'https://as2.ftcdn.net/v2/jpg/05/52/90/99/1000_F_552909948_WnyjkgiiHOlcuBQLdOopcCKBPEd4Il0A.jpg',
+        postImage: 'https://via.placeholder.com/300x600',
+        aspectRatio: 1 / 2,
+        likes: 100,
+        comments: 50,
+        shares: 10,
+        description: 'This image shows a scientist named Rick Sanchez. He is a freelance scientist. He is from dimension C-137. He is 70 years old and is a human.',
+    },
+
+
+    {
+        id: 3,
+        avatar: 'https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg',
+        avatarFallback: 'RS',
+        name: 'Rick Sanchez',
+        postImage: 'https://via.placeholder.com/300x400',
+        aspectRatio: 3 / 4,
+        likes: 100,
+        comments: 50,
+        shares: 10,
+        description: 'This image shows a scientist named Rick Sanchez. He is a freelance scientist. He is from dimension C-137. He is 70 years old and is a human.',
+    },
+
+    {
+        id: 1,
+        avatar: 'https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg',
+        avatarFallback: 'RS',
+        name: 'Rick Sanchez',
+        postImage: 'https://via.placeholder.com/300x450',
+        aspectRatio: 2 / 3,
+        likes: 100,
+        comments: 50,
+        shares: 10,
+        description: 'This image shows a scientist named Rick Sanchez. He is a freelance scientist. He is from dimension C-137. He is 70 years old and is a human.',
+
+    },
+
+    {
+        id: 2,
+        avatar: 'https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg',
+        avatarFallback: 'RS',
+        name: 'Rick Sanchez',
+        postImage: 'https://via.placeholder.com/300x600',
+        aspectRatio: 1 / 2,
+        likes: 100,
+        comments: 50,
+        shares: 10,
+        description: 'This image shows a scientist named Rick Sanchez. He is a freelance scientist. He is from dimension C-137. He is 70 years old and is a human.',
+    },
+
+    {
+        id: 3,
+        avatar: 'https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg',
+        avatarFallback: 'RS',
+        name: 'Rick Sanchez',
+        postImage: 'https://via.placeholder.com/300x400',
+        aspectRatio: 3 / 4,
         likes: 100,
         comments: 50,
         shares: 10,
@@ -125,14 +198,37 @@ export default function Home() {
             <ScrollView>
                 <Image source={require('~/assets/images/carrillo.svg')} />
 
+
+
                 <Card className='rounded-none'>
+
+                    <Card className='rounded-none'>
+                        <Text>For you</Text>
+                    </Card>
+
                     <MasonryList
                         data={posts}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <HomeCard
-                            // Pass the necessary props to your HomeCard component
-                            />
+
+                            <TouchableOpacity
+                                onLongPress={() => handleLongPress(item)}
+                                activeOpacity={0.9}
+                            >
+                                <HomeCard
+
+                                    avatar={item.avatar}
+                                    avatarFallback={item.avatarFallback}
+                                    name={item.name}
+                                    postImage={item.postImage}
+                                    aspectRatio={item.aspectRatio}
+                                    likes={item.likes}
+                                    comments={item.comments}
+                                    shares={item.shares}
+                                    description={item.description}
+                                    width={width / 2 - 10}
+                                />
+                            </TouchableOpacity>
                         )}
                     // Add any other props to customize the layout, spacing, etc.
                     />

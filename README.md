@@ -1,1 +1,4 @@
-Initial
+# Social App Experiment (Abandoned)
+After briefly attempting a dealership CMS (https://github.com/bencejdanko/carillo), we pivoted to another ambitious idea: a social media app with an Instagram-style UI. Built using React Expo and PocketBase, this project was an experiment in mobile development, authentication, and real-time data handling.
+
+Developed during our time in the Zinnstarter program at San Jose State University (SJSU), this app was another stepping stone in our startup journey. While abandoned, it remains a snapshot of our learning process—feel free to browse, cringe, or even build upon it!

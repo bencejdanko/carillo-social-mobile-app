@@ -1,14 +1,34 @@
-import React from 'react';
-import { View, ImageBackground, StyleSheet, Dimensions, Text } from 'react-native';
+import React, { PropsWithChildren } from 'react';
+import { View, ImageBackground, StyleSheet, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Text } from './ui/text';
 
-const { height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = width / 2 - 10; // Two cards per row with some padding
+const CARD_HEIGHT = CARD_WIDTH * 1.5; // Aspect ratio 2:3
 
-const CardWithShadow = () => {
+type Props = {
+    avatar: string;
+    avatarFallback: string;
+    name: string;
+    postImage: string;
+    aspectRatio: number;
+    likes: number;
+    comments: number;
+    shares: number;
+    description: string;
+    width: number;
+}
+
+const CardWithShadow = (props: Props) => {
+    const { avatar, avatarFallback, name, postImage, aspectRatio, likes, comments, shares, description } = props;
+    const height = CARD_WIDTH * aspectRatio // width * aspectRatio;	// Calculate the height based on the aspect ratio
+    
     return (
-        <View style={[styles.card, { height: height-400 }]}>
+        <View style={[styles.card, { height: height }]}>
+            
             <ImageBackground
-                source={{ uri: 'https://img.freepik.com/free-photo/abstract-surface-textures-white-concrete-stone-wall_74190-8189.jpg' }}
+                source={{ uri: postImage }}
                 style={styles.image}
                 resizeMode='cover'
                 imageStyle={styles.imageRadius} // Apply borderRadius to the image
@@ -20,23 +40,12 @@ const CardWithShadow = () => {
                     end={{ x: 0.5, y: 1 }}
                 />
                 <LinearGradient
-                    colors={['transparent', 'rgba(0, 0, 0, 0.2)']}
+                    colors={['#ffffff44', '#00000088']}
                     style={styles.shadowBottom}
                     start={{ x: 0.5, y: 0 }}
                     end={{ x: 0.5, y: 1 }}
                 />
-                <LinearGradient
-                    colors={['rgba(0, 0, 0, 0.2)', 'transparent']}
-                    style={styles.shadowLeft}
-                    start={{ x: 0, y: 0.5 }}
-                    end={{ x: 1, y: 0.5 }}
-                />
-                <LinearGradient
-                    colors={['transparent', 'rgba(0, 0, 0, 0.2)']}
-                    style={styles.shadowRight}
-                    start={{ x: 0, y: 0.5 }}
-                    end={{ x: 1, y: 0.5 }}
-                />
+                <Text>{width}</Text>
             </ImageBackground>
         </View>
     );
@@ -60,27 +69,17 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: 30, // Adjust the height as needed
+        borderTopRightRadius: 10,
+        borderTopLeftRadius: 10,
     },
     shadowBottom: {
         position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
-        height: 30, // Adjust the height as needed
-    },
-    shadowLeft: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        width: 30, // Adjust the width as needed
-    },
-    shadowRight: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        right: 0,
-        width: 30, // Adjust the width as needed
+        height: "30%", // Adjust the height as needed
+        borderBottomRightRadius: 10,
+        borderBottomLeftRadius: 10,
     },
 });
 
